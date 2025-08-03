@@ -14,7 +14,7 @@ import torch.optim as optim
 from sklearn.metrics import accuracy_score, f1_score
 from tqdm import tqdm
 import random
-from chinese_text_augmentation import ChineseTextAugmenter
+from src.data_processing.chinese_text_augmentation import ChineseTextAugmenter
 
 class FakeNewsDataPreprocessor:
     def __init__(self):
@@ -172,6 +172,20 @@ class FakeNewsDataPreprocessor:
             self.train_df = pd.read_csv(self.train_data_path, encoding='utf-8')
             self.test_df = pd.read_csv(self.test_data_path, encoding='utf-8')
             self.val_df = pd.read_csv(self.val_data_path, encoding='utf-8')
+            
+            # 数据清洗
+            def clean_dataframe(df):
+                # 删除缺失值
+                df = df.dropna(subset=['text', 'path', 'label'])
+                # 确保text列是字符串类型
+                df['text'] = df['text'].astype(str)
+                # 过滤掉空字符串
+                df = df[df['text'].str.strip() != '']
+                return df.reset_index(drop=True)
+            
+            self.train_df = clean_dataframe(self.train_df)
+            self.test_df = clean_dataframe(self.test_df)
+            self.val_df = clean_dataframe(self.val_df)
             
             print(f"训练集加载完成，共有{len(self.train_df)}条记录")
             print(f"测试集加载完成，共有{len(self.test_df)}条记录")
