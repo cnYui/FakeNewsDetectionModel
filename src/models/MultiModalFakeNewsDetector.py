@@ -400,7 +400,7 @@ class TransformerFusion(nn.Module):
         
         # Transformer 编码层
         self.transformer = nn.TransformerEncoderLayer(
-            d_model=hidden_dim * 2,  # 拼接后的维度
+            d_model=hidden_dim,  # 每个token的维度
             nhead=4,  # 注意力头数
             dim_feedforward=256,  # 前馈网络维度
             dropout=dropout
@@ -415,13 +415,19 @@ class TransformerFusion(nn.Module):
         text_proj = self.text_proj(text_features)  # [batch_size, hidden_dim]
         image_proj = self.image_proj(image_features)  # [batch_size, hidden_dim]
         
-        # 拼接特征
-        fused = torch.cat([text_proj, image_proj], dim=1)  # [batch_size, hidden_dim * 2]
+        # 将特征作为序列处理
+        # [batch_size, 2, hidden_dim] - 2个token（text和image）
+        sequence = torch.stack([text_proj, image_proj], dim=1)
+        
+        # Transformer期望 [seq_len, batch_size, hidden_dim]
+        sequence = sequence.transpose(0, 1)  # [2, batch_size, hidden_dim]
         
         # Transformer 融合
-        fused = fused.unsqueeze(0)  # [1, batch_size, hidden_dim * 2]
-        fused = self.transformer(fused)
-        fused = fused.squeeze(0)  # [batch_size, hidden_dim * 2]
+        fused_seq = self.transformer(sequence)  # [2, batch_size, hidden_dim]
+        
+        # 转回 [batch_size, seq_len, hidden_dim] 并拼接
+        fused_seq = fused_seq.transpose(0, 1)  # [batch_size, 2, hidden_dim]
+        fused = fused_seq.view(fused_seq.size(0), -1)  # [batch_size, hidden_dim * 2]
         
         # Dropout
         fused = self.dropout(fused)
