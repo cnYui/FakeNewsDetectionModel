@@ -22,13 +22,13 @@ class FakeNewsDataPreprocessor:
         初始化预处理器
         """
         # 使用实际存在的数据集路径
-        self.train_data_path = '/root/autodl-tmp/data/dataset/data/small_train.csv'
-        self.test_data_path = '/root/autodl-tmp/data/dataset/data/small_test.csv'
-        self.val_data_path = '/root/autodl-tmp/data/dataset/data/small_val.csv'
-        self.images_dir = '/root/autodl-tmp/data/dataset/data/images'
+        self.train_data_path = '/root/autodl-tmp/data/small_train.csv'
+        self.test_data_path = '/root/autodl-tmp/data/small_test.csv'
+        self.val_data_path = '/root/autodl-tmp/data/small_val.csv'
+        self.images_dir = '/root/autodl-tmp/data/images'
         
         # 设置本地缓存目录
-        cache_dir = os.path.join('/root/models', 'model_cache')
+        cache_dir = '/root/autodl-tmp/model_cache_new'
         print(f'使用缓存目录: {cache_dir}')
         os.makedirs(cache_dir, exist_ok=True)
         

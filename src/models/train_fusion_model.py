@@ -34,12 +34,12 @@ from torchvision import transforms
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_dir)
 
-# u5bfcu5165u6211u4eecu7684u6a21u578b
-from testWordModel.TextProcessingModel import TextProcessingModel, FakeNewsDataset
-from testPictureModel.ImageProcessingModel import ImageProcessingModel, FakeNewsImageDataset
-from fusionModels.TransformerFusionModel import create_fusion_model
+# 导入我们的模型
+from src.models.text_models.TextProcessingModel import TextProcessingModel, FakeNewsDataset
+from src.models.image_models.ImageProcessingModel import ImageProcessingModel, FakeNewsImageDataset
+from src.models.TransformerFusionModel import create_fusion_model
 
-# u8bbeu7f6eu65e5u5fd7
+# 设置日志
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -49,11 +49,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# u8bbeu7f6eu5e38u91cf
-CACHE_DIR = '/Users/wujianxiang/Documents/GitHub/models/model_cache'
+# 设置常量
+CACHE_DIR = '/root/autodl-tmp/model_cache_new'
 DEFAULT_IMAGE_PATH = os.path.join(CACHE_DIR, 'default_image.jpg')
 
-# u8bbeu7f6eMPSu8bbeu5907uff08u9002u7528u4e8eApple Siliconuff09
+# 设置MPS设备（适用于Apple Silicon）
 def setup_mps_device():
     """
     u8bbeu7f6eMPSu8bbeu5907u5e76u5904u7406u53efu80fdu7684u517cu5bb9u6027u95eeu9898
@@ -1091,7 +1091,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='训练和评估多模态融合模型')
     
     # 数据参数
-    parser.add_argument('--data_dir', type=str, default='/Users/wujianxiang/Documents/GitHub/models/Data',
+    parser.add_argument('--data_dir', type=str, default='/root/autodl-tmp/data',
                         help='数据目录')
     parser.add_argument('--train_file', type=str, default='twitter_dataset/devset/posts.txt',
                         help='训练数据文件名')
@@ -1141,7 +1141,7 @@ if __name__ == '__main__':
                         help='仅评估模型，不训练')
     parser.add_argument('--small_dataset', action='store_true',
                         help='使用小数据集进行测试')
-    parser.add_argument('--model_cache_dir', type=str, default='/Users/wujianxiang/Documents/GitHub/models/model_cache',
+    parser.add_argument('--model_cache_dir', type=str, default='/root/autodl-tmp/model_cache_new',
                         help='模型缓存目录')
     
     args = parser.parse_args()
